@@ -13,8 +13,6 @@ def FW(A, B, C):
                 m = C.index([A[j], A[i]])
                 (W[i])[j] = (B[m])[2]
                 (W[j])[i] = (B[m])[2]
-    print(W)
-    print('---------------')
     L = np.zeros((z, z))
     for i in range(z):
         for j in range(z):
@@ -34,8 +32,6 @@ def FW(A, B, C):
         
         L = L1
         L1 = np.zeros((z, z))
-        print(L)
-        print('--------------')
     
     return L
 
@@ -46,5 +42,3 @@ B = [['A', 'B', 3], ['A', 'C', 4], ['A', 'D', 2],['B', 'D', 5], ['C', 'D', 1]]
 
 P = FW(A, B, C)
 print(P)
-
-#print((B[0])[3])
