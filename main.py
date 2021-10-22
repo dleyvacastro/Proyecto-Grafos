@@ -2,7 +2,7 @@ import json
 from igraph import *
 
 # Lectura del JSON
-animes = open('animes.json', 'r')
+animes = open('animes2.json', 'r')
 animes = json.load(animes)
 
 # Funciones de ponderacion
@@ -35,7 +35,7 @@ for cont in range(len(animes)):
             g_ij = g_f(i["GE"], j["GE"])
             s_ij = s_f(i["SE"], j["SE"])
             f_ij = f(g_ij, s_ij)
-            t4graph.append((i["name"], j["name"], round(f_ij, 2)))
+            t4graph.append((i["name"], j["name"], round(f_ij, 4)))
             t4graph2.append((i["name"], j["name"]))
             if f_ij == 1:
                 non_related.append((i["name"], j["name"]))
