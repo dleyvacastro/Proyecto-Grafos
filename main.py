@@ -21,6 +21,7 @@ def f(g, s): return 1 - (0.5*g + 0.5*s)
 
 # Creacion del grafo
 t4graph = []
+t4graph2 = []
 names = []
 non_related = []
 # g = Graph()
@@ -35,6 +36,7 @@ for cont in range(len(animes)):
             s_ij = s_f(i["SE"], j["SE"])
             f_ij = f(g_ij, s_ij)
             t4graph.append((i["name"], j["name"], round(f_ij, 2)))
+            t4graph2.append((i["name"], j["name"]))
             if f_ij == 1:
                 non_related.append((i["name"], j["name"]))
 
