@@ -1,0 +1,36 @@
+[
+    {
+        "name": "test1",
+        "GE": [
+            "gender1",
+            "gender2",
+            "gender3"
+        ],
+        "SE": [
+            "seiyuu1",
+            "seiyuu2",
+            "seiyuu3"
+        ]
+    },
+    {
+        "name": "test2",
+        "GE": [
+            "gender2",
+            "gender3"
+        ],
+        "SE": [
+            "seiyuu2",
+            "seiyuu3"
+        ]
+    },
+    {
+        "name": "test3",
+        "GE": [
+            "gender5"
+        ],
+        "SE": [
+            "seiyuu4",
+            "seiyuu5"
+        ]
+    }
+]

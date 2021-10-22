@@ -1,0 +1,45 @@
+[
+    {
+        "name": "Shingeki No Kyojin",
+        "GE": [
+            "Action",
+            "Drama",
+            "Fantasy",
+            "Mistery"
+        ],
+        "SE": [
+            "Kaji Yuki",
+            "Ishikawa Yui",
+            "Inoue Marina"
+        ]
+    },
+    {
+        "name": "Boku No Hero Academia",
+        "GE": [
+            "Action",
+            "Comedy"
+        ],
+        "SE": [
+            "Kaji Yuki",
+            "Yamashita Daiki",
+            "Okamoto Nobuhiko",
+            "Myake Kenta",
+            "Sakura Ayane",
+            "Ishikaea Kaito"
+        ]
+    },
+    {
+        "name": "Hunter x Hunter",
+        "GE": [
+            "Action",
+            "Adventure",
+            "Fantasy"
+        ],
+        "SE": [
+            "Ise Mariya",
+            "Sawashiro Miyuki",
+            "Han Megumi",
+            "Fujiwara Keji"
+        ]
+    }
+]
