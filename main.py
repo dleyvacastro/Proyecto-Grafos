@@ -1,22 +1,30 @@
 import json
 from igraph import *
+from FW import FW
+import pandas as pd
 
 # Lectura del JSON
-animes = open('animes2.json', 'r')
+animes = open('animes.json', 'r')
 animes = json.load(animes)
 
 # Funciones de ponderacion
 
 
-def g_f(GE_a, GE_b): return len(list(set(GE_a) & set(GE_b))) / \
-    len(list(set().union(GE_a, GE_b)))
+def g_f(GE_a, GE_b):
+    if len(GE_a)+len(GE_b) == 0:
+        return 0
+    return len(list(set(GE_a) & set(GE_b))) / \
+        len(list(set().union(GE_a, GE_b)))
 
 
-def s_f(SE_a, SE_b): return len(list(set(SE_a) & set(SE_b))) / \
-    len(list(set().union(SE_a, SE_b)))
+def s_f(SE_a, SE_b):
+    if len(SE_a) + len(SE_b) == 0:
+        return 0
+    return len(list(set(SE_a) & set(SE_b))) / \
+        len(list(set().union(SE_a, SE_b)))
 
 
-def f(g, s): return 1 - (0.5*g + 0.5*s)
+def f(g, s): return (1 - (0.5*g + 0.5*s))
 
 
 # Creacion del grafo
@@ -29,7 +37,6 @@ non_related = []
 for cont in range(len(animes)):
     i = animes[cont]
     names.append(i["name"])
-    print(i)
     for j in animes[cont+1:]:
         if i != j:
             g_ij = g_f(i["GE"], j["GE"])
@@ -47,7 +54,16 @@ grafo.es["label"] = grafo.es["weight"]
 for i in non_related:
     grafo.delete_edges([i])
 
+# print(names)
+# print(t4graph)
+# print(t4graph2)
+FWmatrix = FW(names, t4graph, t4graph2)
+# print(FWmatrix)
+df = pd.DataFrame(FWmatrix)
+df.insert(0, "anime", names)
+df = df.rename(columns={i: names[i] for i in range(len(names))})
+df.to_excel('FWmatrix.xlsx', index=False)
 # Grafica
-layout = grafo.layout("kk")
-plot(grafo, layout=layout)
-print(grafo)
+#layout = grafo.layout("kk")
+#plot(grafo, layout=layout)
+# print(grafo)
