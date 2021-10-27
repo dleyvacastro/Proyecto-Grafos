@@ -1,4 +1,5 @@
 import json
+from jikanpy import Jikan
 from igraph import *
 from FW import FW
 import pandas as pd
@@ -27,43 +28,53 @@ def s_f(SE_a, SE_b):
 def f(g, s): return (1 - (0.5*g + 0.5*s))
 
 
-# Creacion del grafo
-t4graph = []
-t4graph2 = []
-names = []
-non_related = []
-# g = Graph()
+def main():
+    jikan = Jikan()
+    anime = jikan.anime(42249)
+    print(anime['title'])
+    # Creacion del grafo
+    t4graph = []
+    t4graph2 = []
+    names = []
+    non_related = []
 
-for cont in range(len(animes)):
-    i = animes[cont]
-    names.append(i["name"])
-    for j in animes[cont+1:]:
-        if i != j:
-            g_ij = g_f(i["GE"], j["GE"])
-            s_ij = s_f(i["SE"], j["SE"])
-            f_ij = f(g_ij, s_ij)
-            t4graph.append((i["name"], j["name"], round(f_ij, 4)))
-            t4graph2.append((i["name"], j["name"]))
-            if f_ij == 1:
-                non_related.append((i["name"], j["name"]))
+    for cont in range(len(animes)):
+        i = animes[cont]
+        names.append(i["name"])
+        for j in animes[cont+1:]:
+            if i != j:
+                g_ij = g_f(i["GE"], j["GE"])
+                s_ij = s_f(i["SE"], j["SE"])
+                f_ij = f(g_ij, s_ij)
+                t4graph.append((i["name"], j["name"], round(f_ij, 4)))
+                t4graph2.append((i["name"], j["name"]))
+                if f_ij == 1:
+                    non_related.append((i["name"], j["name"]))
 
-grafo = Graph.TupleList(t4graph, weights=True)
-grafo.vs["label"] = names
-grafo.es["label"] = grafo.es["weight"]
+    grafo = Graph.TupleList(t4graph, weights=True)
+    grafo.vs["label"] = names
+    grafo.es["label"] = grafo.es["weight"]
 
-for i in non_related:
-    grafo.delete_edges([i])
+    for i in non_related:
+        grafo.delete_edges([i])
 
-# print(names)
-# print(t4graph)
-# print(t4graph2)
-FWmatrix = FW(names, t4graph, t4graph2)
-# print(FWmatrix)
-df = pd.DataFrame(FWmatrix)
-df.insert(0, "anime", names)
-df = df.rename(columns={i: names[i] for i in range(len(names))})
-df.to_excel('FWmatrix.xlsx', index=False)
-# Grafica
-#layout = grafo.layout("kk")
-#plot(grafo, layout=layout)
-# print(grafo)
+    # print(names)
+    # print(t4graph)
+    # print(t4graph2)
+    FWmatrix = FW(names, t4graph, t4graph2)
+    # print(FWmatrix)
+    df = pd.DataFrame(FWmatrix)
+    df.insert(0, "anime", names)
+    df = df.rename(columns={i: names[i] for i in range(len(names))})
+    recomendaciones = df.nsmallest(11, [anime["title"]])
+    recomendaciones = recomendaciones['anime'][1:]
+    print(recomendaciones)
+    df.to_excel('FWmatrix.xlsx', index=False)
+    # Grafica
+    #layout = grafo.layout("kk")
+    #plot(grafo, layout=layout)
+    # print(grafo)
+
+
+if __name__ == '__main__':
+    main()
