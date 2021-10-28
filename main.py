@@ -6,8 +6,9 @@ from FW import FW
 import pandas as pd
 
 # Lectura del JSON
-animes = open('animes.json', 'r')
-animes = json.load(animes)
+animes_json = open('animes.json', 'r')
+animes = json.load(animes_json)
+animes_json.close()
 
 # Funciones de ponderacion
 
@@ -31,7 +32,7 @@ def f(g, s): return (1 - (0.5*g + 0.5*s))
 
 def main():
     jikan = Jikan()
-    anime = jikan.anime(11061)
+    anime = jikan.anime(7411)
     # Creacion del grafo
     t4graph = []
     t4graph2 = []
@@ -49,10 +50,10 @@ def main():
                     t4graph.append((i["name"], j["name"], round(f_ij, 4)))
                     t4graph2.append((i["name"], j["name"]))
 
-                    #non_related.append((i["name"], j["name"]))
+                    # non_related.append((i["name"], j["name"]))
 
     grafo = Graph.TupleList(t4graph, weights=True)
-    grafo.vs["label"] = names
+    grafo.vs["label"] = grafo.vs["name"]
     grafo.es["label"] = grafo.es["weight"]
 
     # for i in non_related:
@@ -62,14 +63,14 @@ def main():
     # print(t4graph)
     # print(t4graph2)
     FWmatrix = FW(names, t4graph, t4graph2)
-    Dijkstra(grafo, anime["title"], jikan.anime(42361)["title"])
+    Dijkstra(grafo, anime["title"], jikan.anime(578)["title"])
     # print(FWmatrix)
     df = pd.DataFrame(FWmatrix)
     df.insert(0, "anime", names)
     df = df.rename(columns={i: names[i] for i in range(len(names))})
     recomendaciones = df.nsmallest(11, [anime["title"]])
     recomendaciones = recomendaciones['anime'][1:]
-    print(recomendaciones)
+    print(recomendaciones.to_string(index=False))
     df.to_excel('FWmatrix.xlsx', index=False)
 #    # Grafica
     layout = grafo.layout("kk")
