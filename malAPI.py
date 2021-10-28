@@ -15,12 +15,27 @@ def get_season_animes(year: int, season: str):
     season_data = jikan.season(year=year, season=season)
     season_animes = season_data["anime"]
     ids = []
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(10)
     for i in season_animes:
-        ids.append(i["mal_id"])
+        try:
+            print(i["title"])
+            ids.append(i["mal_id"])
+        except:
+            print("Saltado")
     return ids
 
 
-def add_anime_to_list():
+def get_last_n_years(iy, fy):
+    seasons = ['winter', 'spring', 'summer', 'fall']
+    ids = []
+    for i in range(iy, fy):
+        for j in seasons:
+            ids = list(set().union(ids, get_season_animes(i, j)))
+    return ids
+
+
+def add_anime_id_to_list():
     # Funcion que recibe por consola diversos mal_id's de animes
     new_json = open("anime_list.json", 'r')
     anime_list = json.load(new_json)
@@ -35,6 +50,32 @@ def add_anime_to_list():
     new_json.write(json.dumps(anime_list, indent=4))
     new_json.close()
     return list(set(anime_list))
+
+
+def add_anime_to_list():
+    control = int(input('Ingresar animes 1 - Si / 0 -No: '))
+    new_animes = []
+    with open("anime_list.json", 'r') as a:
+        a_id = json.load(a)
+    while control:
+        control = int(input('Ingrese el mal_id: '))
+        if control <= 0:
+            break
+        if control not in a_id:
+            new_animes.append(anime2dict(control))
+            a_id.append(control)
+        else:
+            print('Id en lista, añada manualmente')
+
+    with open("anime_list.json", 'w') as a:
+        a.write(json.dumps(a_id), indent=4)
+
+    animes_json = open("animes.json", 'r')
+    animes = json.load(animes_json)
+    animes_json.close()
+
+    with open("animes.json", 'w') as a:
+        a.write(json.dumps(animes + new_animes, indent=4))
 
 
 # def purge_non_main_characters(l):
@@ -81,10 +122,10 @@ def anime2dict(a_id):
 def animes2JSON(id_list):
     # Input: Diccionario con el formato definido en la funcion anime2dict
     # Output: None. Creacion del archivo JSON animes.json
-    signal.signal(signal.SIGALRM, handler)
     animes = []
-    signal.alarm(10)
     for i in id_list:
+        signal.signal(signal.SIGALRM, handler)
+        signal.alarm(10)
         try:
             print(i)
             animes.append(anime2dict(i))
@@ -96,13 +137,14 @@ def animes2JSON(id_list):
     new_json.close()
 
 
-# cowboy_bebop = jikan.anime(1, extension="characters_staff")
-# search_result = jikan.search('anime', 'Hunter x Hunter (2011)')
-# print(search_result["results"][0])
+add_anime_to_list()
+# animes2JSON(add_anime_id_to_list())
+# l = get_last_n_years(2015, 2020)
+# Animes de 2015 - 2020
+# njson = open("test.json", 'r')
+# id_list_2015_2020 = json.load(njson)
+# njson.close()
+#
+# animes2JSON(id_list_2015_2020)
 
-# animes2JSON(add_anime_to_list())
-# animes2JSON([41587, 42249, 41025, 42361, 40938, 41457, 46095, 41623, 42938, 41456, 40586, 41488, 46102, 42205, 43007, 41402, 41103, 44276, 40174, 42192, 43325, 40729, 43439, 42826, 42590, 41265, 40870, 42395, 47250, 40685, 43756, 40752, 42307, 43229, 40526, 47391, 42774, 42568, 47591, 47639, 43763, 45665, 42516, 42321, 42071, 45587, 45618, 48365, 48442, 48391, 44273, 46381, 46652, 42870, 43778, 42068, 44848, 48770, 48517, 48486, 48790, 48789, 48539, 21, 34566, 41491, 235, 37984, 966, 40682, 40351, 40906, 41074, 40964, 8687, 40145, 41556, 23539, 44191, 2406, 1199, 40129, 6149, 45782, 44056, 1960, 32353, 42653, 40880, 4459, 33398, 37096, 45207, 35478, 42295, 42482, 30151, 7505, 10506, 32956, 8336, 35694, 43416, 18941, 38776, 22669, 30119, 41638,
-#            29375, 41384, 29421, 35697, 35696, 35372, 36506, 35698, 35695, 34990, 38099, 38451, 41276, 41458, 48250, 48262, 49920, 43692, 44942, 44074, 43697, 48590, 49236, 43591, 39728, 49200, 37346, 48727, 48735, 49066, 47904, 48481, 49501, 41221, 47405, 49215, 48537, 49063, 42178, 42359, 44068, 49214, 48455, 48953, 48684, 48555, 44041, 48610, 48956, 41918, 48845, 49430, 44090, 48791, 48890, 48942, 49170, 49305, 49098, 48864, 48866, 49118, 44209, 48873, 48844, 49274, 49975, 49615, 43609, 44983, 48468, 36889, 48626, 48697, 48513, 48651, 48889, 48654, 48422, 48652, 48843, 38086, 35759, 37765, 39764, 42798, 48612, 41780, 40664, 41361, 41781, 40554, 45620, 41028, 45654, 48130, 48614, 49235, 49318, 45604, 49241, 49026, 46587, 49228, 37290, 49755, 49060])
-animes2JSON(get_season_animes(2021, "spring"))
-# nimes2JSON([38000, 21])
-# 136
+# animes2JSON(get_season_animes(2021, "spring"))
