@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from jikanpy import Jikan
 from igraph import *
 from DJ2 import Dijkstra
@@ -29,8 +30,16 @@ def s_f(SE_a, SE_b):
 
 def f(g, s): return (1 - (0.5*g + 0.5*s))
 
+# Funciones Relacionadas a FW
+
+
+def import_FWmatrix():
+    FWmatrix = pd.read_excel("FWmatrix.xlsx", index_col=0)
+    return FWmatrix
+
 
 def main():
+    # Instancias del API
     jikan = Jikan()
     anime = jikan.anime(7411)
     # Creacion del grafo
@@ -38,6 +47,7 @@ def main():
     t4graph2 = []
     names = []
 
+    print("Creando el Grafo")
     for cont in range(len(animes)):
         i = animes[cont]
         names.append(i["name"])
@@ -55,16 +65,20 @@ def main():
     grafo = Graph.TupleList(t4graph, weights=True)
     grafo.vs["label"] = grafo.vs["name"]
     grafo.es["label"] = grafo.es["weight"]
+    print("Grafo Creado")
 
-    # for i in non_related:
-    #    grafo.delete_edges([i])
-
-    # print(names)
-    # print(t4graph)
-    # print(t4graph2)
+    # LLamado del algoritmo FW
+    t1 = datetime.now()
+    print(f"Iniciando Floyd-Warshall: {t1}")
     FWmatrix = FW(names, t4graph, t4graph2)
-    Dijkstra(grafo, anime["title"], jikan.anime(578)["title"])
-    # print(FWmatrix)
+    t2 = datetime.now()
+    tdelta = t2-t1
+    print(f"Fin de FW: {t2}, tiempo empleado: {tdelta}")
+
+    # algoritmo de Dijkstra
+    #Dijkstra(grafo, anime["title"], jikan.anime(42361)["title"])
+
+    #
     df = pd.DataFrame(FWmatrix)
     df.insert(0, "anime", names)
     df = df.rename(columns={i: names[i] for i in range(len(names))})
@@ -72,6 +86,7 @@ def main():
     recomendaciones = recomendaciones['anime'][1:]
     print(recomendaciones.to_string(index=False))
     df.to_excel('FWmatrix.xlsx', index=False)
+    print("Excel creado")
 #    # Grafica
     layout = grafo.layout("kk")
     plot(grafo, layout=layout)
