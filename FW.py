@@ -1,7 +1,9 @@
 import numpy as np
+import pandas as pd
+from datetime import datetime
 
 
-def FW(A, B, C):
+def FW_a(A, B, C):
     z = len(A)
     W = np.zeros((z, z))
 
@@ -40,10 +42,25 @@ def FW(A, B, C):
     return L
 
 
+def FW(A, B, C):
+    # LLamado del algoritmo FW
+    t1 = datetime.now()
+    print(f"Iniciando Floyd-Warshall: {t1}")
+    FWmatrix = FW_a(A, B, C)
+    t2 = datetime.now()
+    tdelta = t2-t1
+    print(f"Fin de FW: {t2}, tiempo empleado: {tdelta}")
+    return FWmatrix
+
+
+def import_FWmatrix():
+    FWmatrix = pd.read_excel("FWmatrix.xlsx", index_col=0)
+    return FWmatrix
+
+
 #A = ['A', 'B', 'C', 'D']
 #C = [['A', 'B'], ['A', 'C'], ['A', 'D'],['B', 'D'], ['C', 'D']]
 #B = [['A', 'B', 3], ['A', 'C', 4], ['A', 'D', 2],['B', 'D', 5], ['C', 'D', 1]]
 #
 #P = FW(A, B, C)
 # print(P)
-
