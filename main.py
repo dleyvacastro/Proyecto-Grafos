@@ -1,9 +1,8 @@
 import json
-from datetime import datetime
 from jikanpy import Jikan
 from igraph import *
-from DJ2 import Dijkstra
-from FW import FW
+from DJ import Dijkstra
+from FW import FW, import_FWmatrix
 import pandas as pd
 
 # Lectura del JSON
@@ -28,20 +27,13 @@ def s_f(SE_a, SE_b):
         len(list(set().union(SE_a, SE_b)))
 
 
-def f(g, s): return (1 - (0.5*g + 0.5*s))
-
-# Funciones Relacionadas a FW
-
-
-def import_FWmatrix():
-    FWmatrix = pd.read_excel("FWmatrix.xlsx", index_col=0)
-    return FWmatrix
+def f(g, s): return (1 - (0.7*g + 0.3*s))
 
 
 def main():
     # Instancias del API
     jikan = Jikan()
-    anime = jikan.anime(7411)
+    anime = jikan.anime(int(input("Ingrese el id del anime que vio: ")))
     # Creacion del grafo
     t4graph = []
     t4graph2 = []
@@ -56,7 +48,7 @@ def main():
                 g_ij = g_f(i["GE"], j["GE"])
                 s_ij = s_f(i["SE"], j["SE"])
                 f_ij = f(g_ij, s_ij)
-                if f_ij != 1:
+                if f_ij < 1:
                     t4graph.append((i["name"], j["name"], round(f_ij, 4)))
                     t4graph2.append((i["name"], j["name"]))
 
@@ -67,13 +59,8 @@ def main():
     grafo.es["label"] = grafo.es["weight"]
     print("Grafo Creado")
 
-    # LLamado del algoritmo FW
-    t1 = datetime.now()
-    print(f"Iniciando Floyd-Warshall: {t1}")
     FWmatrix = FW(names, t4graph, t4graph2)
-    t2 = datetime.now()
-    tdelta = t2-t1
-    print(f"Fin de FW: {t2}, tiempo empleado: {tdelta}")
+    #FWmatrix = import_FWmatrix()
 
     # algoritmo de Dijkstra
     #Dijkstra(grafo, anime["title"], jikan.anime(42361)["title"])
@@ -81,12 +68,20 @@ def main():
     #
     df = pd.DataFrame(FWmatrix)
     df.insert(0, "anime", names)
+
     df = df.rename(columns={i: names[i] for i in range(len(names))})
-    recomendaciones = df.nsmallest(11, [anime["title"]])
-    recomendaciones = recomendaciones['anime'][1:]
-    print(recomendaciones.to_string(index=False))
     df.to_excel('FWmatrix.xlsx', index=False)
     print("Excel creado")
+
+    recomendaciones = df.nsmallest(11, [anime["title"]])
+    recomendaciones = recomendaciones['anime'][1:]
+
+    print(f'Porque viste {anime["title"]} Te recomendamos: ')
+    print(recomendaciones.to_string(index=False))
+
+    recomendaciones = recomendaciones.values.tolist()
+    for i in recomendaciones:
+        Dijkstra(grafo, anime["title"], i)
 #    # Grafica
     layout = grafo.layout("kk")
     plot(grafo, layout=layout)
