@@ -55,20 +55,20 @@ def add_anime_id_to_list():
 def add_anime_to_list():
     control = int(input('Ingresar animes 1 - Si / 0 -No: '))
     new_animes = []
-    with open("anime_list.json", 'r') as a:
+    with open("animes.json", 'r') as a:
         a_id = json.load(a)
+        ids = [i["mal_id"] for i in a_id]
     while control:
         control = int(input('Ingrese el mal_id: '))
         if control <= 0:
             break
-        if control not in a_id:
+        if control not in ids:
             new_animes.append(anime2dict(control))
-            a_id.append(control)
         else:
-            print('Id en lista, añada manualmente')
+            print('Anime ya en la lista.')
 
     with open("anime_list.json", 'w') as a:
-        a.write(json.dumps(a_id, indent=4))
+        a.write(json.dumps(ids, indent=4))
 
     animes_json = open("animes.json", 'r')
     animes = json.load(animes_json)
@@ -117,7 +117,7 @@ def anime2dict(a_id):
     # Output: diccionario con los generos, interpretes vocales y nombre del anime
     anime = jikan.anime(a_id)
     print(anime["title"])
-    return {"name": anime["title"], "GE": genres2list(anime), "SE": seiyuufilter(a_id)}
+    return {"name": anime["title"], "mal_id": a_id, "GE": genres2list(anime), "SE": seiyuufilter(a_id)}
 
 
 def animes2JSON(id_list):
@@ -138,8 +138,8 @@ def animes2JSON(id_list):
     new_json.close()
 
 
-# add_anime_to_list()
-animes2JSON(add_anime_id_to_list())
+add_anime_to_list()
+# animes2JSON(add_anime_id_to_list())
 # l = get_last_n_years(2015, 2020)
 # Animes de 2015 - 2020
 # njson = open("test.json", 'r')
@@ -148,4 +148,4 @@ animes2JSON(add_anime_id_to_list())
 #
 # animes2JSON(id_list_2015_2020)
 
-# animes2JSON(get_season_animes(2021, "spring"))
+#animes2JSON(get_season_animes(2021, "spring"))
