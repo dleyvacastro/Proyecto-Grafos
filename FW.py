@@ -1,4 +1,5 @@
 import numpy as np
+import json
 import pandas as pd
 from datetime import datetime
 
@@ -50,11 +51,18 @@ def FW(A, B, C):
     t2 = datetime.now()
     tdelta = t2-t1
     print(f"Fin de FW: {t2}, tiempo empleado: {tdelta}")
-    return FWmatrix
+    df = pd.DataFrame(FWmatrix)
+    df.insert(0, "anime", A)
+
+    df = df.rename(columns={i: A[i] for i in range(len(A))})
+    df.to_csv('FWmatrix.csv', index=False)
+    print("Excel creado")
+
+    return df
 
 
 def import_FWmatrix():
-    FWmatrix = pd.read_excel("FWmatrix.xlsx", index_col=0)
+    FWmatrix = pd.read_csv("FWmatrix.csv")
     return FWmatrix
 
 

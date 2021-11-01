@@ -59,19 +59,12 @@ def main():
     grafo.es["label"] = grafo.es["weight"]
     print("Grafo Creado")
 
-    FWmatrix = FW(names, t4graph, t4graph2)
-    #FWmatrix = import_FWmatrix()
+    # df = FW(names, t4graph, t4graph2)
+    df = import_FWmatrix()
+    print(df)
 
     # algoritmo de Dijkstra
     #Dijkstra(grafo, anime["title"], jikan.anime(42361)["title"])
-
-    #
-    df = pd.DataFrame(FWmatrix)
-    df.insert(0, "anime", names)
-
-    df = df.rename(columns={i: names[i] for i in range(len(names))})
-    df.to_excel('FWmatrix.xlsx', index=False)
-    print("Excel creado")
 
     recomendaciones = df.nsmallest(11, [anime["title"]])
     recomendaciones = recomendaciones['anime'][1:]
