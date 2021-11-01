@@ -4,6 +4,7 @@ import signal
 
 # Objeto del API Jikan
 jikan = Jikan()
+urls = {}
 
 
 def handler(signum, frame):
@@ -64,12 +65,17 @@ def add_anime_to_list():
             break
         if control not in ids:
             new_animes.append(anime2dict(control))
+            ids.append(control)
         else:
             print('Anime ya en la lista.')
 
     with open("anime_list.json", 'w') as a:
         a.write(json.dumps(ids, indent=4))
 
+    with open("urls.json", 'r') as a:
+        old_urls = json.loads(a.read())
+    with open("urls.json", 'w') as a:
+        a.write(json.dumps(old_urls | urls, indent=4))
     animes_json = open("animes.json", 'r')
     animes = json.load(animes_json)
     animes_json.close()
@@ -117,7 +123,9 @@ def anime2dict(a_id):
     # Output: diccionario con los generos, interpretes vocales y nombre del anime
     anime = jikan.anime(a_id)
     print(anime["title"])
-    return {"name": anime["title"], "mal_id": a_id, "GE": genres2list(anime), "SE": seiyuufilter(a_id)}
+    urls[anime["title"]] = anime["url"]
+
+    return {"name": anime["title"], "mal_id": anime["mal_id"], "GE": genres2list(anime), "SE": seiyuufilter(a_id)}
 
 
 def animes2JSON(id_list):
@@ -133,13 +141,15 @@ def animes2JSON(id_list):
         except:
             print("saltado")
             pass
+    with open("urls.json", 'w') as a:
+        a.write(json.dumps(urls, indent=4))
     new_json = open("animes.json", "w")
     new_json.write(json.dumps(animes, indent=4))
     new_json.close()
 
 
-add_anime_to_list()
 # animes2JSON(add_anime_id_to_list())
+add_anime_to_list()
 # l = get_last_n_years(2015, 2020)
 # Animes de 2015 - 2020
 # njson = open("test.json", 'r')
@@ -147,5 +157,4 @@ add_anime_to_list()
 # njson.close()
 #
 # animes2JSON(id_list_2015_2020)
-
-#animes2JSON(get_season_animes(2021, "spring"))
+# animes2JSON(get_season_animes(2021, "spring"))

@@ -2,6 +2,7 @@ import json
 from jikanpy import Jikan
 from igraph import *
 from DJ import Dijkstra
+from gui import GUI
 from FW import FW, import_FWmatrix
 import pandas as pd
 
@@ -33,7 +34,7 @@ def f(g, s): return (1 - (0.7*g + 0.3*s))
 def main():
     # Instancias del API
     jikan = Jikan()
-    anime = jikan.anime(int(input("Ingrese el id del anime que vio: ")))
+   #  anime = jikan.anime(int(input("Ingrese el id del anime que vio: ")))
     # Creacion del grafo
     t4graph = []
     t4graph2 = []
@@ -59,13 +60,14 @@ def main():
     grafo.es["label"] = grafo.es["weight"]
     print("Grafo Creado")
 
-    # df = FW(names, t4graph, t4graph2)
-    df = import_FWmatrix()
-    print(df)
+    df = FW(names, t4graph, t4graph2)
+    # df = import_FWmatrix()
+    # print(df)
 
     # algoritmo de Dijkstra
     #Dijkstra(grafo, anime["title"], jikan.anime(42361)["title"])
 
+    """ Impresion en consola
     recomendaciones = df.nsmallest(11, [anime["title"]])
     recomendaciones = recomendaciones['anime'][1:]
 
@@ -75,10 +77,11 @@ def main():
     recomendaciones = recomendaciones.values.tolist()
     for i in recomendaciones:
         Dijkstra(grafo, anime["title"], i)
+    """
 #    # Grafica
-    layout = grafo.layout("kk")
-    plot(grafo, layout=layout)
-   # print(grafo)
+    # layout = grafo.layout("kk")
+    # plot(grafo, layout=layout)
+    GUI(jikan, df)
 
 
 if __name__ == '__main__':
