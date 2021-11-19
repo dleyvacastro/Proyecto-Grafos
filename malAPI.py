@@ -148,8 +148,8 @@ def animes2JSON(id_list):
     new_json.close()
 
 
-# animes2JSON(add_anime_id_to_list())
-add_anime_to_list()
+animes2JSON(add_anime_id_to_list())
+# add_anime_to_list()
 # l = get_last_n_years(2015, 2020)
 # Animes de 2015 - 2020
 # njson = open("test.json", 'r')
