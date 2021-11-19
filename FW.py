@@ -63,7 +63,6 @@ def FW(A, B, C):
 
 def import_FWmatrix(name='FWmatrix.csv'):
     FWmatrix = pd.read_csv(name)
-    print(FWmatrix)
     return FWmatrix
 
 
