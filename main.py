@@ -40,28 +40,29 @@ def main():
     t4graph2 = []
     names = []
 
-    print("Creando el Grafo")
-    for cont in range(len(animes)):
-        i = animes[cont]
-        names.append(i["name"])
-        for j in animes[cont+1:]:
-            if i != j:
-                g_ij = g_f(i["GE"], j["GE"])
-                s_ij = s_f(i["SE"], j["SE"])
-                f_ij = f(g_ij, s_ij)
-                if f_ij < 1:
-                    t4graph.append((i["name"], j["name"], round(f_ij, 4)))
-                    t4graph2.append((i["name"], j["name"]))
+    if bool(int(input('1 - Construir Grafo\n0 - Importar Matriz FW\nSeleccion:'))):
+        print("Creando el Grafo")
+        for cont in range(len(animes)):
+            i = animes[cont]
+            names.append(i["name"])
+            for j in animes[cont+1:]:
+                if i != j:
+                    g_ij = g_f(i["GE"], j["GE"])
+                    s_ij = s_f(i["SE"], j["SE"])
+                    f_ij = f(g_ij, s_ij)
+                    if f_ij < 1:
+                        t4graph.append((i["name"], j["name"], round(f_ij, 4)))
+                        t4graph2.append((i["name"], j["name"]))
 
-                    # non_related.append((i["name"], j["name"]))
+        grafo = Graph.TupleList(t4graph, weights=True)
+        grafo.vs["label"] = grafo.vs["name"]
+        grafo.es["label"] = grafo.es["weight"]
+        print("Grafo Creado")
 
-    grafo = Graph.TupleList(t4graph, weights=True)
-    grafo.vs["label"] = grafo.vs["name"]
-    grafo.es["label"] = grafo.es["weight"]
-    print("Grafo Creado")
-
-    df = FW(names, t4graph, t4graph2)
-    # df = import_FWmatrix()
+        df = FW(names, t4graph, t4graph2)
+    else:
+        print("Importando csv")
+        df = import_FWmatrix()
     # print(df)
 
     # algoritmo de Dijkstra
@@ -79,8 +80,8 @@ def main():
         Dijkstra(grafo, anime["title"], i)
     """
 #    # Grafica
-    # layout = grafo.layout("kk")
-    # plot(grafo, layout=layout)
+    #layout = grafo.layout("kk")
+    #plot(grafo, layout=layout)
     GUI(jikan, df)
 
 

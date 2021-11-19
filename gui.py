@@ -6,13 +6,22 @@ import pandas as pd
 import webbrowser
 
 
+def inf_filter(d: dict) -> list:
+    inf_list = []
+    for i in d:
+        if d[i] != float('inf'):
+            inf_list.append(i)
+
+    return inf_list
+
+
 def GUI(jikan, df):
 
     sg.theme('DarkAmber')   # Add a touch of color
     # All the stuff inside your window.
     # Event Loop to process "events" and get the "values" of the inputs
     layout = [
-        [sg.Text('Bienvenido a Anime Suggestor')],
+        [sg.Text('Bienvenido a Tactical Anime Suggestor')],
         [sg.Text('Nombre del anime que vió:'), sg.InputText()],
         [sg.Button('Ok'), sg.Button('Cancel')]
     ]
@@ -45,18 +54,31 @@ def GUI(jikan, df):
     recomendaciones = df.nsmallest(11, [anime])
     # print(recomendaciones)
 
+    valores = recomendaciones[anime][1:]
+    valores = valores.values.tolist()
     recomendaciones = recomendaciones['anime'][1:]
     recomendaciones = recomendaciones.values.tolist()
 
-    with open("urls.json", 'r') as urls:
-        urls = json.load(urls)
-        vis_recomendaciones = [
-            [sg.Text(f'{i+1}. {recomendaciones[i]}', enable_events=True, font=font, key=f"URL {urls[recomendaciones[i]]}")] for i in range(len(recomendaciones))]
-    layout = [
-        [sg.Text(
-            text=f'Porque viste {anime} te recomendamos:', font=('Rubik', 15))]
-    ] + vis_recomendaciones
+    recomendaciones2 = {recomendaciones[i]: valores[i]
+                        for i in range(len(recomendaciones))}
 
+    # print(recomendaciones2)
+    recomendaciones = inf_filter(recomendaciones2)
+    # print(recomendaciones)
+    if recomendaciones:
+        with open("urls.json", 'r') as urls:
+            urls = json.load(urls)
+            vis_recomendaciones = [
+                [sg.Text(f'{i+1}. {recomendaciones[i]}', enable_events=True, font=font, key=f"URL {urls[recomendaciones[i]]}")] for i in range(len(recomendaciones))]
+        layout = [
+            [sg.Text(
+                text=f'Porque viste {anime} te recomendamos:', font=('Rubik', 15))]
+        ] + vis_recomendaciones
+
+    else:
+        layout = [[sg.Text(
+            text="404: El anime seleccionado esta aislado", font=('Rubik', 15)
+        )]]
     window = sg.Window('Suggestions', layout)
     while True:
         event, values = window.read()
