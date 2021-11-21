@@ -9,6 +9,7 @@
 - [Modelo:](#modelo)
   - [Vertices:](#vertices)
   - [Aristas:](#aristas)
+  - [Relación:](#relacion)
 - [Implementación:](#implementacion)
   - [Recolección de datos:](#recoleccion-de-datos)
   - [Procesamiento de datos:](#procesamiento-de-datos)
@@ -18,28 +19,26 @@
 
 ## Descripcion
 Se desarrollo una aplicación que con el uso de grafos ponderados es capaz de generar recomendaciones de series anime con base en los gustos del usuario, especificamente, en los interpretes de voz y generos de obras vistas previamente.
-## Hardware: 
-### Equipo:
-#### Sensores: 
-- Acelerometro: MPU-6050.
-- Pulsometro: --.
-#### Actuadores:
-- Bluetooht: HC-05.
-- Motor de vibracion: Lilypad vibe.
-- Led: Lilypad LED.
-#### Baterias:
-- Powerbank generica.
-- Lilypad LiPower - Baterias de litio.
-#### Conexiones:
-- Hilo conductor.
-- Jummpers.
-#### Arduino:
-- Arduino Lilypad.
-### Esquema del circuito.
-![Esquema de conexión](/images/Esquema_final.jpg)
 
-
-
+## Modelo
+Se modeló un grafo ponderado, definido de la siguiente manera:
+### Vertices
+$V = {v_1,v_2,...,v_3}$ donde $n$ es el número de animes en el grafo y $v_i$ es la representación del anime $i$.
+### Aristas
+$E = {e_1,e_2,...,e_k}$ donde $k$ es el numero de aristas del grafo y la arista $e_i$ conecta 2 animes que guarden una relación por géneros o por interpretes de voz en comun.
+### Relación
+$W = \{w_{0}, w_{2}, ..., w_{k}\}$ donde $w_{i}$ representa el peso de la arista $e_{i}$ dada por la relación $f$ existente entre los vértices $a$ y $b$, lo calculamos de la siguiente manera:
+        
+        $$f = 1 - (0.7 \cdot{\textbf{g}} +0.3 \cdot{\textbf{s}})$$
+        
+        Donde: \\
+        \begin{itemize}
+            \item $\textbf{g}$ es la proporción dada por la cantidad de géneros que coinciden sobre la cantidad de géneros totales entre 2 animes:    
+                $$\dfrac{|GE_{a} \cap GE_{b}|}{|GE_{a} \cup GE_{b}|}$$
+            \item $\textbf{s}$ es la proporción dada por la cantidad de seiyuu's que coinciden sobre la cantidad de seiyuu's totales entre 2 animes:    
+                $$\dfrac{|SL_{a} \cap SL_{b}|}{|SL_{a} \cup SL_{b}|}$$
+        \end{itemize}
+        Note que $\textbf{g,s} \leq 1$.
 ## Software:
 - **Arduino**:
 
